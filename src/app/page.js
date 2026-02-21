@@ -55,7 +55,6 @@ export default function MarkdownEditor() {
   const [isMounted, setIsMounted] = useState(false);
   const [viewMode, setViewMode] = useState("split"); // "edit", "preview", "split"
   const [theme, setTheme] = useState("light"); // "light", "dark"
-  const [zoomedImage, setZoomedImage] = useState(null); // Lightbox 全屏预览
   const textareaRef = useRef(null);
   const previewRef = useRef(null);       // 预览区滚动容器
   const rafRef = useRef(null);           // requestAnimationFrame 句柄，用于防抖
@@ -234,7 +233,6 @@ export default function MarkdownEditor() {
     }
   }, [content, getSuggestedFilename]);
 
-  // useCallback 包裹主题切换，传给 IconButton 时引用稳定
   const toggleTheme = useCallback(() => {
     setTheme((t) => (t === "dark" ? "light" : "dark"));
   }, []);
@@ -269,67 +267,19 @@ export default function MarkdownEditor() {
         </span>
       );
       return (
-        <span
-          className="block my-4"
-          title="点击全屏预览"
-        >
-          <img
-            src={src}
-            alt={alt || ""}
-            {...props}
-            // 只限宽度，不限制高度，让图片按自然比例展示
-            className="max-w-full h-auto block rounded-md cursor-zoom-in hover:opacity-90 transition-opacity"
-            onClick={() => setZoomedImage({ src, alt: alt || "" })}
-            onError={(e) => { e.currentTarget.style.display = "none"; }}
-          />
-          {alt && (
-            <span className="block text-center text-sm text-neutral-400 dark:text-neutral-500 mt-1.5 italic">
-              {alt}
-            </span>
-          )}
-        </span>
+        <img
+          src={src}
+          alt={alt || ""}
+          {...props}
+          className="max-w-full h-auto block rounded-md my-4"
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
       );
     },
   };
 
   return (
     <div className="flex flex-col h-screen w-screen bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 font-sans overflow-hidden transition-colors">
-
-      {/* Lightbox 全屏图片预览 */}
-      {zoomedImage && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          onClick={() => setZoomedImage(null)}
-          onKeyDown={(e) => e.key === "Escape" && setZoomedImage(null)}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          role="dialog"
-          aria-modal="true"
-          aria-label="图片全屏预览"
-        >
-          {/* 关闭按鈕 */}
-          <button
-            className="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-9 h-9 flex items-center justify-center transition-colors"
-            onClick={() => setZoomedImage(null)}
-            aria-label="关闭"
-          >
-            ✕
-          </button>
-          {/* 图片本体：最大 92vw / 88vh，等比缩放不裁切 */}
-          <img
-            src={zoomedImage.src}
-            alt={zoomedImage.alt}
-            className="max-w-[92vw] max-h-[88vh] object-contain rounded-lg shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-          {/* Alt 文字展示在底部 */}
-          {zoomedImage.alt && (
-            <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm text-center max-w-md">
-              {zoomedImage.alt}
-            </p>
-          )}
-        </div>
-      )}
 
       {/* 顶部工具栏 */}
       <header className="flex-none h-14 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between px-4 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm z-10 w-full">
