@@ -1,0 +1,158 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.dark {
+  --background: #171717;
+  --foreground: #ededed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* 直接引用 layout.js 通过 next/font 注入的字体 CSS 变量 */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+/* ============================
+   全局基础排版（中文优化）
+   ============================ */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  /* 中文阅读最佳行高：1.8 */
+  line-height: 1.8;
+  /* 微量字间距：让汉字之间呼吸感更好，不会太紧凑 */
+  letter-spacing: 0.02em;
+  /* macOS / iOS 亚像素抗锯齿 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* 标点压缩：让行首行尾的全角标点（。，！）不占据多余空间 */
+  font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================
+   Prose 中文排版精调
+   ============================ */
+
+/* 正文段落 */
+.prose p {
+  line-height: 1.9;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  /* 首行不缩进（现代风格），如果你偏好传统缩进可改为 2em */
+  text-indent: 0;
+  /* 中文段落字间距略宽，英文段落保持正常 */
+  word-spacing: 0.05em;
+}
+
+/* 标题：中文标题不需要太大字间距 */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+/* 列表项：保持与正文一致的行高 */
+.prose li {
+  line-height: 1.8;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+/* 块引用：中文引用视觉稍微弱化 */
+.prose blockquote {
+  font-style: normal;
+  /* 中文斜体通常渲染难看，关掉 */
+  border-left-width: 3px;
+  padding-left: 1em;
+  color: inherit;
+  opacity: 0.7;
+}
+
+/* 行内代码：中文场景下代码字体回落到等宽 */
+.prose code {
+  font-family: var(--font-mono), ui-monospace, "Noto Sans Mono", "Courier New", monospace;
+  font-size: 0.875em;
+  font-style: normal;
+}
+
+/* 代码块 */
+.prose pre {
+  font-family: var(--font-mono), ui-monospace, "Noto Sans Mono", "Courier New", monospace;
+  font-size: 0.875em;
+  line-height: 1.7;
+  border-radius: 8px;
+}
+
+/* ============================
+   编辑区输入框：中文书写专属
+   ============================ */
+textarea {
+  font-family: var(--font-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.85;
+  letter-spacing: 0.02em;
+  word-spacing: 0.05em;
+  /* 让中文标点在行末/行首时更自然 */
+  word-break: break-all;
+  overflow-wrap: break-word;
+  /* 中文 Tab = 2 字符宽度更合理 */
+  tab-size: 2;
+}
+
+/* ============================
+   优雅的自定义滚动条
+   ============================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.65);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(82, 82, 91, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(113, 113, 122, 0.8);
+}
+
+/* ============================
+   工具栏隐藏滚动条（但可滚动）
+   ============================ */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
