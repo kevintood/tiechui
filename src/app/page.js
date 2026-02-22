@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 
 // memo 包裹：只要 props 不变就不会重新渲染
-const IconButton = memo(({ icon: Icon, onClick, title, active }) => (
+const IconButton = memo(({ icon: Icon, onClick, title, active, className = "" }) => (
   <button
     type="button"
     onClick={onClick}
@@ -38,7 +38,7 @@ const IconButton = memo(({ icon: Icon, onClick, title, active }) => (
     className={`inline-flex items-center justify-center shrink-0 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 w-9 hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-700 dark:hover:text-neutral-50 ${active
       ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50"
       : "text-neutral-500 dark:text-neutral-400"
-      }`}
+      } ${className}`}
   >
     <Icon className="h-4 w-4" />
   </button>
@@ -71,6 +71,10 @@ export default function MarkdownEditor() {
       setTheme(savedTheme);
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark");
+    }
+    // 移动端默认进入编辑模式，避免分屏太挤
+    if (window.innerWidth < 640) {
+      setViewMode("edit");
     }
   }, []);
 
@@ -279,7 +283,7 @@ export default function MarkdownEditor() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 font-sans overflow-hidden transition-colors">
+    <div className="flex flex-col h-screen h-[100dvh] w-screen bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 font-sans overflow-hidden transition-colors">
 
       {/* 顶部工具栏 */}
       <header className="flex-none h-14 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between px-4 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm z-10 w-full">
@@ -287,20 +291,20 @@ export default function MarkdownEditor() {
           {toolbarButtons.map((btn, i) =>
             btn === null
               ? <div key={i} className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1 shrink-0" />
-              : <IconButton key={btn.title} icon={btn.icon} title={btn.title} onClick={btn.action} />
+              : <IconButton key={i} icon={btn.icon} title={btn.title} onClick={btn.action} />
           )}
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
           {/* 视图模式切换 */}
-          <div className="hidden sm:flex bg-neutral-100 dark:bg-neutral-800 rounded-md p-0.5 mr-2">
+          <div className="flex bg-neutral-100 dark:bg-neutral-800 rounded-md p-0.5">
             <IconButton icon={PenLine} title="仅编辑" active={viewMode === "edit"} onClick={() => setViewMode("edit")} />
-            <IconButton icon={Columns} title="分屏" active={viewMode === "split"} onClick={() => setViewMode("split")} />
+            <IconButton icon={Columns} title="分屏" active={viewMode === "split"} onClick={() => setViewMode("split")} className="hidden sm:inline-flex" />
             <IconButton icon={Eye} title="仅预览" active={viewMode === "preview"} onClick={() => setViewMode("preview")} />
           </div>
 
           {/* 主题切换 */}
-          <div className="flex bg-neutral-100 dark:bg-neutral-800 rounded-md p-0.5 ml-2">
+          <div className="flex bg-neutral-100 dark:bg-neutral-800 rounded-md p-0.5">
             <IconButton
               icon={theme === "dark" ? Sun : Moon}
               title="切换主题"

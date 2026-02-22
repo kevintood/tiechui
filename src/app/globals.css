@@ -76,20 +76,51 @@ body {
 }
 
 /* 块引用：中文引用视觉稍微弱化 */
-.prose blockquote {
-  font-style: normal;
-  /* 中文斜体通常渲染难看，关掉 */
-  border-left-width: 3px;
-  padding-left: 1em;
-  color: inherit;
-  opacity: 0.7;
+/* 更加强力地移除 Tailwind Typography 默认的伪元素内容（引号和反引号） */
+/* 使用 :where 选择器匹配 Tailwind Typography 的内部权重 */
+:where(.prose) :where(blockquote p:first-of-type)::before,
+:where(.prose) :where(blockquote p:last-of-type)::after,
+:where(.prose) :where(blockquote)::before,
+:where(.prose) :where(blockquote)::after,
+:where(.prose) :where(code)::before,
+:where(.prose) :where(code)::after {
+  content: none !important;
 }
 
-/* 行内代码：中文场景下代码字体回落到等宽 */
-.prose code {
-  font-family: var(--font-mono), ui-monospace, "Noto Sans Mono", "Courier New", monospace;
-  font-size: 0.875em;
-  font-style: normal;
+/* 块引用：外观精调 */
+.prose blockquote {
+  font-style: normal !important;
+  border-left-width: 4px !important;
+  border-left-color: #e5e5e5;
+  padding-left: 1.25em !important;
+  color: inherit !important;
+  opacity: 0.85;
+  margin-left: 0;
+  margin-right: 0;
+  quotes: none !important;
+}
+
+.dark .prose blockquote {
+  border-left-color: #404040;
+}
+
+/* 行内代码：样式精调 */
+.prose :not(pre)>code {
+  font-family: var(--font-mono), ui-monospace, "Noto Sans Mono", "Courier New", monospace !important;
+  font-size: 0.85em !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  padding: 0.2em 0.4em !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  white-space: nowrap;
+}
+
+.dark .prose :not(pre)>code {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: inherit !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 /* 代码块 */
